@@ -32,8 +32,22 @@ module Linkedin
     end
 
     def click_random_connection
-      all('.bt-request-buffed.buffed-blue-bkg-1').sample.click
+      if add_contact_link = all('.bt-request-buffed.buffed-blue-bkg-1').sample
+        add_contact_link.trigger('click')
+      else
+        if find('h1', text: /\ALinkedIn is Momentarily Unavailable\z/)
+          stop
+        else
+          visit_people_hub
+        end
+      end
     end
+
+    def stop
+      exit(0)
+    end
+
+    private
 
     def add_connection_loop
       counter = 0
