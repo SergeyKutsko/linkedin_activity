@@ -15,7 +15,7 @@ module Linkedin
       @headless.start
     end
 
-     def login
+    def login
       visit 'https://www.linkedin.com/uas/login'
       fill_in "session_key-login", with: ENV['EMAIL']
       fill_in "session_password-login", with: ENV['PASSWORD']
@@ -23,7 +23,6 @@ module Linkedin
     end
 
     def start
-      login
       visit_ask_page
       fill_up_form
       send_message
@@ -35,6 +34,7 @@ module Linkedin
 
     def send_message
       click_button 'Submit'
+      save_and_open_page
       stop
     end
 
@@ -44,6 +44,10 @@ module Linkedin
     end
 
     def fill_up_form
+      fill_in 'dyna-firstName', with: "Sergey"
+      fill_in 'dyna-lastName', with: "Kutsko"
+      fill_in 'dyna-email', with: ENV['EMAIL']
+
       within '#dyna-c\\$customer_classification' do
         find("option[value='743']", visible: false).click
       end
