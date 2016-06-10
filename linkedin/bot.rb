@@ -1,16 +1,17 @@
 require 'capybara'
-require 'capybara/poltergeist'
+require 'capybara/dsl'
+require 'headless'
+require 'selenium-webdriver'
 
 module Linkedin
   class Bot
     include Capybara::DSL
 
     def initialize
-      Capybara.default_driver = :poltergeist
-      Capybara.register_driver :poltergeist do |app|
-        Capybara::Poltergeist::Driver.new(app, { phantomjs_options: ['--load-images=no', '--ignore-ssl-errors=yes']})
-      end
+      Capybara.default_driver = :selenium
       Capybara.app = Proc.new{ [200,{},""] }
+      @headless = Headless.new
+      @headless.start
     end
 
     def start
@@ -33,9 +34,10 @@ module Linkedin
 
     def click_random_connection
       if add_contact_link = all('.bt-request-buffed.buffed-blue-bkg-1').sample
-        add_contact_link.trigger('click')
+        add_contact_link.click
       else
-        if find('h1', text: /\ALinkedIn is Momentarily Unavailable\z/)
+        if is_service_available?
+          notify_support
           stop
         else
           visit_people_hub
@@ -43,7 +45,18 @@ module Linkedin
       end
     end
 
+    def is_service_available?
+      available = true
+      find('h1', text: /\ALinkedIn is Momentarily Unavailable\z/) rescue available = false
+      available
+    end
+
+    def notify_support
+      Linkedin::Help.new.start
+    end
+
     def stop
+      @headless.destroy
       exit(0)
     end
 
