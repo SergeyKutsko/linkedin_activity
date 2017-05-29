@@ -10,11 +10,11 @@ module Linkedin
     def initialize
       Capybara.default_driver = :selenium
       Capybara.app = Proc.new{ [200,{},""] }
-     # @headless = Headless.new
+      @headless = Headless.new
     end
 
     def start
-     # @headless.start
+      @headless.start
       login
       visit_people_hub
       add_connection_loop
@@ -33,7 +33,7 @@ module Linkedin
     end
 
     def click_random_connection
-      if add_contact_link = all('.bt-request-buffed.buffed-blue-bkg-1').sample
+      if add_contact_link = all('.mn-pymk-list__action-container').sample
         add_contact_link.click
       else
         if is_service_available?
@@ -56,7 +56,7 @@ module Linkedin
     end
 
     def stop
-    #  @headless.destroy
+      @headless.destroy
       exit(0)
     end
 
