@@ -12,7 +12,6 @@ module Linkedin
       Capybara.default_driver = :selenium
       Capybara.app = Proc.new{ [200,{},""] }
       @headless = Headless.new
-      @headless.start
     end
 
     def login
@@ -23,6 +22,7 @@ module Linkedin
     end
 
     def start
+      @headless.start
       visit_ask_page
       fill_up_form
       send_message
