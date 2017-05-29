@@ -10,11 +10,11 @@ module Linkedin
     def initialize
       Capybara.default_driver = :selenium
       Capybara.app = Proc.new{ [200,{},""] }
-      @headless = Headless.new
-      @headless.start
+     # @headless = Headless.new
     end
 
     def start
+     # @headless.start
       login
       visit_people_hub
       add_connection_loop
@@ -56,7 +56,7 @@ module Linkedin
     end
 
     def stop
-      @headless.destroy
+    #  @headless.destroy
       exit(0)
     end
 
